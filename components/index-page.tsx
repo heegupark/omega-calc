@@ -6,18 +6,18 @@ export default function IndexPage() {
     <>
       <Head>
         <meta charSet="UTF-8" />
-        <title>o-note</title>
+        <title>o-calculator</title>
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
         />
-        <meta name="title" content="Fun note" />
-        <meta name="description" content="Fun note" />
-        <meta property="og:title" content="o-note" />
+        <meta name="title" content="Fun calculator" />
+        <meta name="description" content="Fun calculator" />
+        <meta property="og:title" content="o-calculator" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://note.heegu.net/" />
-        <meta property="og:image" content="../static/images/note-ss-001.gif" />
-        <meta property="og:description" content="Fun note" />
+        <meta property="og:url" content="https://calc.heegu.net/" />
+        <meta property="og:image" content="../static/images/calc-ss-001.gif" />
+        <meta property="og:description" content="Fun calculator" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <link
           rel="shortcut icon"
