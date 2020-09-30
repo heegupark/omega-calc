@@ -27,83 +27,128 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '36px',
       alignItems: 'center',
       justifyContent: 'center',
+      '&:hover': {
+        backgroundColor: 'rgb(75,75,75)',
+      },
+      '&:active': {
+        backgroundColor: 'rgb(115,115,115)',
+      },
     },
     sign: {
       backgroundColor: 'rgb(166,166,166)',
       color: 'black',
       fontSize: '30px',
+      '&:hover': {
+        backgroundColor: 'rgb(190,190,190)',
+      },
+      '&:active': {
+        backgroundColor: 'rgb(217,217,217)',
+      },
     },
     symbol: {
       backgroundColor: 'rgb(242,162,60)',
+      '&:hover': {
+        backgroundColor: 'rgb(243,180,100)',
+      },
+      '&:active': {
+        backgroundColor: 'rgb(244,200,149)',
+      },
     },
   })
 );
-export default function NumberPad() {
+
+interface INumberPadProps {
+  setInput: (input: number) => void;
+  input: number;
+}
+
+export default function NumberPad(props: INumberPadProps) {
   const classes = useStyles();
+  const keypad = [
+    { value: 'AC', type: 'sign' },
+    { value: '+/−', type: 'sign' },
+    { value: '%', type: 'sign' },
+    { value: '÷', type: 'symbol' },
+    { value: '7', type: 'number' },
+    { value: '8', type: 'number' },
+    { value: '9', type: 'number' },
+    { value: 'X', type: 'symbol' },
+    { value: '4', type: 'number' },
+    { value: '5', type: 'number' },
+    { value: '6', type: 'number' },
+    { value: '−', type: 'symbol' },
+    { value: '1', type: 'number' },
+    { value: '2', type: 'number' },
+    { value: '3', type: 'number' },
+    { value: '+', type: 'symbol' },
+    { value: '0', type: 'number' },
+    { value: '00', type: 'number' },
+    { value: '.', type: 'number' },
+    { value: '=', type: 'symbol' },
+  ];
+
+  const handleNumberClick = (input: string) => {
+    let newInput = '';
+    switch (input) {
+      case '0':
+        newInput = props.input ? props.input.toString() + input : '0';
+        break;
+      case '00':
+        newInput = props.input ? props.input.toString() + input : '0';
+        break;
+      default:
+        newInput = props.input
+          ? props.input.toString() + input
+          : props.input.toString().substring(1) + input;
+    }
+    props.setInput(Number(newInput));
+  };
+
+  const handleSignClick = (input: string) => {
+    switch (input) {
+      case 'AC':
+        props.setInput(0);
+        break;
+      case '+':
+        if (props.input) {
+          props.setInput(props.input * 0.01);
+        }
+        break;
+      case '%':
+        if (props.input) {
+          props.setInput(props.input * 0.01);
+        }
+        break;
+      default:
+    }
+  };
 
   return (
     <Flex className={classes.pad}>
-      <SimpleGrid columns={4} spacing={3}>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.sign)}>AC</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.sign)}>{'+/−'}</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.sign)}>%</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.symbol)}>÷</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>7</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>8</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>9</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.symbol)}>X</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>4</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>5</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>6</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.symbol)}>−</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>1</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>2</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>3</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.symbol)}>+</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>0</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>00</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={classes.number}>.</Flex>
-        </Flex>
-        <Flex className={classes.box}>
-          <Flex className={clsx(classes.number, classes.symbol)}>=</Flex>
-        </Flex>
+      <SimpleGrid columns={4} spacing={2}>
+        {keypad.map((key, index: number) => {
+          const keyValue = key.value === 'AC' && props.input ? 'C' : key.value;
+          return (
+            <Flex className={classes.box} key={index}>
+              <Flex
+                onClick={() =>
+                  key.type === 'number'
+                    ? handleNumberClick(key.value)
+                    : handleSignClick(key.value)
+                }
+                className={
+                  key.type === 'number'
+                    ? classes.number
+                    : key.type === 'sign'
+                    ? clsx(classes.number, classes.sign)
+                    : clsx(classes.number, classes.symbol)
+                }
+              >
+                {keyValue}
+              </Flex>
+            </Flex>
+          );
+        })}
       </SimpleGrid>
     </Flex>
   );
