@@ -45,6 +45,17 @@ const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: 'rgb(217,217,217)',
       },
     },
+    selectedSymbol: {
+      backgroundColor: 'white',
+      color: 'rgb(242,162,60)',
+      fontSize: '30px',
+      '&:hover': {
+        backgroundColor: 'rgb(190,190,190)',
+      },
+      '&:active': {
+        backgroundColor: 'rgb(217,217,217)',
+      },
+    },
     symbol: {
       backgroundColor: 'rgb(242,162,60)',
       '&:hover': {
@@ -63,6 +74,11 @@ interface INumberPadProps {
 }
 
 export default function NumberPad(props: INumberPadProps) {
+  const [prev, setPrev] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [symbol, setSymbol] = useState('');
+  const [symbolFlag, setSymbolFlag] = useState(false);
+  const [flag, setFlag] = useState(false);
   const classes = useStyles();
   const keypad = [
     { value: 'AC', type: 'sign' },
@@ -72,7 +88,7 @@ export default function NumberPad(props: INumberPadProps) {
     { value: '7', type: 'number' },
     { value: '8', type: 'number' },
     { value: '9', type: 'number' },
-    { value: 'X', type: 'symbol' },
+    { value: '×', type: 'symbol' },
     { value: '4', type: 'number' },
     { value: '5', type: 'number' },
     { value: '6', type: 'number' },
@@ -87,39 +103,72 @@ export default function NumberPad(props: INumberPadProps) {
     { value: '=', type: 'symbol' },
   ];
 
+  const calc = (num1: number, num2: number, sign: string) => {
+    switch (sign) {
+      case '+':
+        return num1 + num2;
+      case '−':
+        return num1 - num2;
+      case '÷':
+        return num1 / num2;
+      case '×':
+        return num1 * num2;
+    }
+    return 0;
+  };
+
   const handleNumberClick = (input: string) => {
     let newInput = '';
+    const newCurrent = props.input;
+    const prevInput = flag ? 0 : newCurrent;
     switch (input) {
       case '0':
-        newInput = props.input ? props.input.toString() + input : '0';
+        newInput = prevInput ? prevInput.toString() + input : '0';
         break;
       case '00':
-        newInput = props.input ? props.input.toString() + input : '0';
+        newInput = prevInput ? prevInput.toString() + input : '0';
         break;
       default:
-        newInput = props.input
-          ? props.input.toString() + input
-          : props.input.toString().substring(1) + input;
+        newInput = prevInput
+          ? prevInput.toString() + input
+          : prevInput.toString().substring(1) + input;
     }
+    setFlag(false);
+    setCurrent(Number(newInput));
     props.setInput(Number(newInput));
+  };
+
+  const initValue = () => {
+    props.setInput(0);
+    setPrev(0);
+    setCurrent(0);
+    setSymbol('');
+    setFlag(false);
   };
 
   const handleSignClick = (input: string) => {
     switch (input) {
       case 'AC':
-        props.setInput(0);
+        initValue();
         break;
-      case '+':
-        if (props.input) {
-          props.setInput(props.input * 0.01);
-        }
-        break;
-      case '%':
-        if (props.input) {
-          props.setInput(props.input * 0.01);
-        }
+      case '=':
+        const newInput = calc(prev, current, symbol);
+        setPrev(newInput);
+        props.setInput(newInput);
+        setFlag(true);
         break;
       default:
+        setFlag(true);
+        setSymbol(input);
+        if (symbol === input && symbolFlag) {
+          const newInput = calc(prev, current, symbol);
+          setPrev(newInput);
+          props.setInput(newInput);
+          setSymbolFlag(false);
+        } else {
+          setSymbolFlag(true);
+          setPrev(current);
+        }
     }
   };
 
@@ -128,6 +177,21 @@ export default function NumberPad(props: INumberPadProps) {
       <SimpleGrid columns={4} spacing={2}>
         {keypad.map((key, index: number) => {
           const keyValue = key.value === 'AC' && props.input ? 'C' : key.value;
+          let classStr = null;
+          switch (key.type) {
+            case 'symbol':
+              if (symbol === key.value) {
+                classStr = clsx(classes.number, classes.selectedSymbol);
+              } else {
+                classStr = clsx(classes.number, classes.symbol);
+              }
+              break;
+            case 'sign':
+              classStr = clsx(classes.number, classes.sign);
+              break;
+            default:
+              classStr = classes.number;
+          }
           return (
             <Flex className={classes.box} key={index}>
               <Flex
@@ -136,13 +200,7 @@ export default function NumberPad(props: INumberPadProps) {
                     ? handleNumberClick(key.value)
                     : handleSignClick(key.value)
                 }
-                className={
-                  key.type === 'number'
-                    ? classes.number
-                    : key.type === 'sign'
-                    ? clsx(classes.number, classes.sign)
-                    : clsx(classes.number, classes.symbol)
-                }
+                className={classStr}
               >
                 {keyValue}
               </Flex>
