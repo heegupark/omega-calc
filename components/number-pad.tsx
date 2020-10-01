@@ -1,21 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Key } from 'react';
 import { Input, Flex, Box, PseudoBox, SimpleGrid } from '@chakra-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    pad: {
-      // width: '300px',
-      alignItems: 'center',
-      justifyContent: 'center',
-      // height: '400px',
-    },
     box: {
-      // width: '100px',
       alignItems: 'center',
       justifyContent: 'center',
-      // height: '100px',
     },
     number: {
       cursor: 'pointer',
@@ -104,15 +96,18 @@ export default function NumberPad(props: INumberPadProps) {
   ];
 
   const calc = (num1: number, num2: number, sign: string) => {
-    console.log(num1, num2, sign);
     switch (sign) {
       case '+':
         return num1 + num2;
-      case '−':
+      case '-':
         return num1 - num2;
       case '÷':
         return num1 / num2;
+      case '/':
+        return num1 / num2;
       case '×':
+        return num1 * num2;
+      case '*':
         return num1 * num2;
       case '%':
         return props.input * 0.01;
@@ -121,6 +116,42 @@ export default function NumberPad(props: INumberPadProps) {
     }
     return 0;
   };
+
+  const downHandler = ({ key }: { key: Key }) => {
+    if (
+      key === '0' ||
+      key === '1' ||
+      key === '2' ||
+      key === '3' ||
+      key === '4' ||
+      key === '5' ||
+      key === '6' ||
+      key === '7' ||
+      key === '8' ||
+      key === '9'
+    ) {
+      handleNumberClick(key.toString());
+    } else if (
+      key === '-' ||
+      key === '+' ||
+      key === '/' ||
+      key === '*' ||
+      key === '.' ||
+      key === '%'
+    ) {
+      handleSignClick(key);
+    } else if (key === 'Enter' || key === '=') {
+      handleSignClick('=');
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('keyup', downHandler);
+    // Remove event listeners on cleanup
+    return () => {
+      window.removeEventListener('keyup', downHandler);
+    };
+  });
 
   const handleNumberClick = (input: string) => {
     let newInput = '';
@@ -188,7 +219,7 @@ export default function NumberPad(props: INumberPadProps) {
   };
 
   return (
-    <Flex className={classes.pad}>
+    <Flex className={classes.box}>
       <SimpleGrid columns={4} spacing={2}>
         {keypad.map((key, index: number) => {
           const keyValue = key.value === 'AC' && props.input ? 'C' : key.value;
