@@ -6,28 +6,18 @@ interface IInputPadProps {
 }
 
 export default function InputPad(props: IInputPadProps) {
-  let fontSize = '';
-  switch (true) {
-    case props.input.toString().length > 20:
-      fontSize = '18px';
-      break;
-    case props.input.toString().length > 15:
-      fontSize = '21px';
-      break;
-    case props.input.toString().length > 10:
-      fontSize = '31px';
-      break;
-    default:
-      fontSize = '42px';
-  }
+  let fontSize =
+    props.input.toString().length > 11
+      ? `${42 - props.input.toString().length}px`
+      : '42px';
   return (
     <Flex
       width="300px"
       align="center"
       height="60px"
-      justify="row-end"
+      // justify="row-end"
       color="white"
-      overflow="scroll"
+      overflow="hidden"
     >
       <SimpleGrid
         columns={1}
@@ -36,7 +26,9 @@ export default function InputPad(props: IInputPadProps) {
         p={2}
         fontSize={fontSize}
       >
-        <Box textAlign="right">{props.input.toLocaleString()}</Box>
+        <Box textAlign="right">
+          {props.input > 999 ? props.input.toLocaleString() : props.input}
+        </Box>
       </SimpleGrid>
     </Flex>
   );

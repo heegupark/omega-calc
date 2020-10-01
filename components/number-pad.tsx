@@ -104,6 +104,7 @@ export default function NumberPad(props: INumberPadProps) {
   ];
 
   const calc = (num1: number, num2: number, sign: string) => {
+    console.log(num1, num2, sign);
     switch (sign) {
       case '+':
         return num1 + num2;
@@ -113,6 +114,10 @@ export default function NumberPad(props: INumberPadProps) {
         return num1 / num2;
       case '×':
         return num1 * num2;
+      case '%':
+        return props.input * 0.01;
+      case '+/−':
+        return props.input * -1;
     }
     return 0;
   };
@@ -151,23 +156,33 @@ export default function NumberPad(props: INumberPadProps) {
       case 'AC':
         initValue();
         break;
+      case '%':
+        props.setInput(calc(prev, current, input));
+        break;
+      case '+/−':
+        props.setInput(calc(prev, current, input));
+        break;
       case '=':
-        const newInput = calc(prev, current, symbol);
-        setPrev(newInput);
-        props.setInput(newInput);
+        const newInput1 = calc(prev, current, symbol);
+        setPrev(newInput1);
+        props.setInput(newInput1);
         setFlag(true);
         break;
       default:
+        const newInput2 = calc(prev, current, symbol);
         setFlag(true);
         setSymbol(input);
-        if (symbol === input && symbolFlag) {
-          const newInput = calc(prev, current, symbol);
-          setPrev(newInput);
-          props.setInput(newInput);
-          setSymbolFlag(false);
+        if (symbol === input) {
+          if (symbolFlag) {
+            setPrev(newInput2);
+            props.setInput(newInput2);
+            setSymbolFlag(false);
+          } else {
+            setPrev(props.input);
+          }
         } else {
+          setPrev(props.input);
           setSymbolFlag(true);
-          setPrev(current);
         }
     }
   };
