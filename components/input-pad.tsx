@@ -12,10 +12,9 @@ export default function InputPad(props: IInputPadProps) {
       : '42px';
   return (
     <Flex
-      width="300px"
+      // width="300px"
       align="center"
       height="60px"
-      // justify="row-end"
       color="white"
       overflow="hidden"
     >
@@ -27,7 +26,11 @@ export default function InputPad(props: IInputPadProps) {
         fontSize={fontSize}
       >
         <Box textAlign="right">
-          {props.input > 999 ? props.input.toLocaleString() : props.input}
+          {props.input.toString().length <= 22
+            ? Math.abs(props.input) > 999
+              ? props.input.toLocaleString()
+              : props.input
+            : 'Out of range'}
         </Box>
       </SimpleGrid>
     </Flex>

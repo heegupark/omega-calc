@@ -4,6 +4,14 @@ body {
   background-color: rgb(0, 0, 0);
 }
 
+.pad {
+  display: block;
+}
+
+.pad-landscape {
+  display: none;
+}
+
 @media (max-width: 1199.98px) {
 }
 
@@ -22,7 +30,14 @@ body {
 @media (max-width: 575.98px) {
 }
 
-@media (max-height: 375px) {
+@media (max-height: 414px) {
+  .pad {
+    display: none;
+  }
+
+  .pad-landscape {
+    display: block;
+  }
 }
 
 @media (max-width: 320px) {
