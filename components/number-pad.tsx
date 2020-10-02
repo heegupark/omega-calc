@@ -247,7 +247,7 @@ export default function NumberPad(props: INumberPadProps) {
     }
   };
 
-  const isLandscape = props.height <= 500;
+  const isLandscape = props.height <= 414;
   const isSmall = props.height <= 320;
   const pad = isLandscape ? keypadLandscape : keypad;
   return (

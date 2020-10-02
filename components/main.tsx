@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Flex, Box, PseudoBox, SimpleGrid } from '@chakra-ui/core';
+import { Flex, Box, SimpleGrid } from '@chakra-ui/core';
 import NumberPad from './number-pad';
 import InputPad from './input-pad';
+
+const conatiner = {
+  width: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '100vh',
+};
 
 export default function Main() {
   const [input, setInput] = useState(0);
@@ -14,15 +21,19 @@ export default function Main() {
   };
 
   useEffect(() => {
+    handleSize();
+  }, []);
+
+  useEffect(() => {
     window.addEventListener('resize', handleSize);
     // Remove event listeners on cleanup
     return () => {
       window.removeEventListener('resize', handleSize);
     };
-  });
+  }, [width, height]);
 
   return (
-    <Flex width="100%" align="center" justify="center" height="100vh">
+    <Flex style={conatiner}>
       <SimpleGrid columns={1} spacing={2}>
         <Box>
           <InputPad input={input} />
