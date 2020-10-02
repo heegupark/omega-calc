@@ -9,11 +9,17 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
+    numberSizeSm: {
+      width: '55px',
+      height: '55px',
+    },
+    numberSizeMd: {
+      width: '65px',
+      height: '65px',
+    },
     number: {
       cursor: 'pointer',
       backgroundColor: 'rgb(51,51,51)',
-      width: '65px',
-      height: '65px',
       borderRadius: '50%',
       color: 'white',
       fontSize: '36px',
@@ -63,6 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
 interface INumberPadProps {
   setInput: (input: number) => void;
   input: number;
+  height: number;
 }
 
 export default function NumberPad(props: INumberPadProps) {
@@ -240,82 +247,60 @@ export default function NumberPad(props: INumberPadProps) {
     }
   };
 
+  const isLandscape = props.height <= 500;
+  const isSmall = props.height <= 320;
+  const pad = isLandscape ? keypadLandscape : keypad;
   return (
     <Flex className={classes.box}>
-      <div className="pad">
-        <SimpleGrid columns={4} spacing={2}>
-          {keypad.map((key, index: number) => {
-            const keyValue =
-              key.value === 'AC' && props.input ? 'C' : key.value;
-            let classStr = null;
-            switch (key.type) {
-              case 'symbol':
-                if (symbol === key.value) {
-                  classStr = clsx(classes.number, classes.selectedSymbol);
-                } else {
-                  classStr = clsx(classes.number, classes.symbol);
+      <SimpleGrid columns={isLandscape ? 5 : 4} spacing={isSmall ? 1 : 2}>
+        {pad.map((key, index: number) => {
+          const keyValue = key.value === 'AC' && props.input ? 'C' : key.value;
+          let classStr = null;
+          switch (key.type) {
+            case 'symbol':
+              if (symbol === key.value) {
+                classStr = clsx(
+                  isSmall ? classes.numberSizeSm : classes.numberSizeMd,
+                  classes.number,
+                  classes.selectedSymbol
+                );
+              } else {
+                classStr = clsx(
+                  isSmall ? classes.numberSizeSm : classes.numberSizeMd,
+                  classes.number,
+                  classes.symbol
+                );
+              }
+              break;
+            case 'sign':
+              classStr = clsx(
+                isSmall ? classes.numberSizeSm : classes.numberSizeMd,
+                classes.number,
+                classes.sign
+              );
+              break;
+            default:
+              classStr = clsx(
+                isSmall ? classes.numberSizeSm : classes.numberSizeMd,
+                classes.number
+              );
+          }
+          return (
+            <Flex className={classes.box} key={index}>
+              <Flex
+                onClick={() =>
+                  key.type === 'number'
+                    ? handleNumberClick(key.value)
+                    : handleSignClick(key.value)
                 }
-                break;
-              case 'sign':
-                classStr = clsx(classes.number, classes.sign);
-                break;
-              default:
-                classStr = classes.number;
-            }
-            return (
-              <Flex className={classes.box} key={index}>
-                <Flex
-                  onClick={() =>
-                    key.type === 'number'
-                      ? handleNumberClick(key.value)
-                      : handleSignClick(key.value)
-                  }
-                  className={classStr}
-                >
-                  {keyValue}
-                </Flex>
+                className={classStr}
+              >
+                {keyValue}
               </Flex>
-            );
-          })}
-        </SimpleGrid>
-      </div>
-      <div className="pad-landscape">
-        <SimpleGrid columns={5} spacing={2}>
-          {keypadLandscape.map((key, index: number) => {
-            const keyValue =
-              key.value === 'AC' && props.input ? 'C' : key.value;
-            let classStr = null;
-            switch (key.type) {
-              case 'symbol':
-                if (symbol === key.value) {
-                  classStr = clsx(classes.number, classes.selectedSymbol);
-                } else {
-                  classStr = clsx(classes.number, classes.symbol);
-                }
-                break;
-              case 'sign':
-                classStr = clsx(classes.number, classes.sign);
-                break;
-              default:
-                classStr = classes.number;
-            }
-            return (
-              <Flex className={classes.box} key={index}>
-                <Flex
-                  onClick={() =>
-                    key.type === 'number'
-                      ? handleNumberClick(key.value)
-                      : handleSignClick(key.value)
-                  }
-                  className={classStr}
-                >
-                  {keyValue}
-                </Flex>
-              </Flex>
-            );
-          })}
-        </SimpleGrid>
-      </div>
+            </Flex>
+          );
+        })}
+      </SimpleGrid>
     </Flex>
   );
 }
