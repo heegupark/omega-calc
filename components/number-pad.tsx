@@ -80,48 +80,48 @@ export default function NumberPad(props: INumberPadProps) {
   const [flag, setFlag] = useState(false);
   const classes = useStyles();
   const keypad = [
-    { value: 'AC', type: 'sign' },
-    { value: '+/−', type: 'sign' },
-    { value: '%', type: 'sign' },
-    { value: '÷', type: 'symbol' },
-    { value: '7', type: 'number' },
-    { value: '8', type: 'number' },
-    { value: '9', type: 'number' },
-    { value: '×', type: 'symbol' },
-    { value: '4', type: 'number' },
-    { value: '5', type: 'number' },
-    { value: '6', type: 'number' },
-    { value: '−', type: 'symbol' },
-    { value: '1', type: 'number' },
-    { value: '2', type: 'number' },
-    { value: '3', type: 'number' },
-    { value: '+', type: 'symbol' },
-    { value: '0', type: 'number' },
-    { value: '00', type: 'number' },
-    { value: '.', type: 'number' },
-    { value: '=', type: 'symbol' },
+    { display: 'AC', type: 'sign', value: 'AC' },
+    { display: '+/−', type: 'sign', value: '+/−' },
+    { display: '%', type: 'sign', value: '%' },
+    { display: '÷', type: 'symbol', value: '/' },
+    { display: '7', type: 'number', value: '7' },
+    { display: '8', type: 'number', value: '8' },
+    { display: '9', type: 'number', value: '9' },
+    { display: '×', type: 'symbol', value: '*' },
+    { display: '4', type: 'number', value: '4' },
+    { display: '5', type: 'number', value: '5' },
+    { display: '6', type: 'number', value: '6' },
+    { display: '−', type: 'symbol', value: '-' },
+    { display: '1', type: 'number', value: '1' },
+    { display: '2', type: 'number', value: '2' },
+    { display: '3', type: 'number', value: '3' },
+    { display: '+', type: 'symbol', value: '+' },
+    { display: '0', type: 'number', value: '0' },
+    { display: '00', type: 'number', value: '00' },
+    { display: '.', type: 'number', value: '.' },
+    { display: '=', type: 'symbol', value: '=' },
   ];
   const keypadLandscape = [
-    { value: 'AC', type: 'sign' },
-    { value: '7', type: 'number' },
-    { value: '8', type: 'number' },
-    { value: '9', type: 'number' },
-    { value: '÷', type: 'symbol' },
-    { value: '+/−', type: 'sign' },
-    { value: '4', type: 'number' },
-    { value: '5', type: 'number' },
-    { value: '6', type: 'number' },
-    { value: '×', type: 'symbol' },
-    { value: '%', type: 'sign' },
-    { value: '1', type: 'number' },
-    { value: '2', type: 'number' },
-    { value: '3', type: 'number' },
-    { value: '−', type: 'symbol' },
-    { value: '=', type: 'symbol' },
-    { value: '.', type: 'number' },
-    { value: '0', type: 'number' },
-    { value: '00', type: 'number' },
-    { value: '+', type: 'symbol' },
+    { display: 'AC', type: 'sign', value: 'AC' },
+    { display: '7', type: 'number', value: '7' },
+    { display: '8', type: 'number', value: '8' },
+    { display: '9', type: 'number', value: '9' },
+    { display: '÷', type: 'symbol', value: '/' },
+    { display: '+/−', type: 'sign', value: '+/−' },
+    { display: '4', type: 'number', value: '4' },
+    { display: '5', type: 'number', value: '5' },
+    { display: '6', type: 'number', value: '6' },
+    { display: '×', type: 'symbol', value: '*' },
+    { display: '%', type: 'sign', value: '%' },
+    { display: '1', type: 'number', value: '1' },
+    { display: '2', type: 'number', value: '2' },
+    { display: '3', type: 'number', value: '3' },
+    { display: '−', type: 'symbol', value: '-' },
+    { display: '=', type: 'symbol', value: '=' },
+    { display: '.', type: 'number', value: '.' },
+    { display: '0', type: 'number', value: '0' },
+    { display: '00', type: 'number', value: '00' },
+    { display: '+', type: 'symbol', value: '+' },
   ];
 
   const calc = (num1: number, num2: number, sign: string) => {
@@ -254,7 +254,8 @@ export default function NumberPad(props: INumberPadProps) {
     <Flex className={classes.box}>
       <SimpleGrid columns={isLandscape ? 5 : 4} spacing={isSmall ? 1 : 2}>
         {pad.map((key, index: number) => {
-          const keyValue = key.value === 'AC' && props.input ? 'C' : key.value;
+          const keyValue =
+            key.display === 'AC' && props.input ? 'C' : key.display;
           let classStr = null;
           switch (key.type) {
             case 'symbol':
