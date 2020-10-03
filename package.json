@@ -1,5 +1,5 @@
 {
-  "name": "omega-note",
+  "name": "omega-calc",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/heegupark/omega-note.git"
+    "url": "git+https://github.com/heegupark/omega-calc.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/heegupark/omega-note/issues"
+    "url": "https://github.com/heegupark/omega-calc/issues"
   },
-  "homepage": "https://github.com/heegupark/omega-note#readme",
+  "homepage": "https://github.com/heegupark/omega-calc#readme",
   "dependencies": {
     "@chakra-ui/core": "^0.8.0",
     "@emotion/core": "^10.0.35",
