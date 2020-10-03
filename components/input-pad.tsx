@@ -3,20 +3,27 @@ import { Input, Flex, Box, PseudoBox, SimpleGrid } from '@chakra-ui/core';
 
 interface IInputPadProps {
   input: string;
+  isOutOfRange: boolean;
 }
 
 export default function InputPad(props: IInputPadProps) {
   const [fontSize, setFontSize] = useState('42px');
 
   useEffect(() => {
-    setFontSize(
-      Number(props.input).toString().length > 11
-        ? `${42 - props.input.toString().length}px`
-        : '42px'
-    );
+    if (!props.isOutOfRange) {
+      setFontSize(
+        Number(props.input).toString().length > 11
+          ? `${42 - props.input.toString().length}px`
+          : '42px'
+      );
+    }
   }, [props.input]);
 
   const formatInput = (inputStr: string) => {
+    if (props.isOutOfRange) {
+      return 'Out of Range';
+    }
+
     const hasE = Number(inputStr).toString().includes('e');
     const hasDot = inputStr.includes('.');
     let result = '';

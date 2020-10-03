@@ -70,6 +70,8 @@ interface INumberPadProps {
   setInput: (input: string) => void;
   input: string;
   height: number;
+  isOutOfRange: boolean;
+  setIsOutOfRange: (isOutOfRange: boolean) => void;
 }
 
 export default function NumberPad(props: INumberPadProps) {
@@ -194,33 +196,35 @@ export default function NumberPad(props: INumberPadProps) {
   };
 
   const handleNumberClick = (input: string) => {
-    let newInput = '';
-    const newCurrent = props.input;
-    const prevInput = flag ? '0' : newCurrent;
-    switch (input) {
-      case '0':
-        newInput = prevInput !== '0' ? prevInput.toString() + input : '0';
-        break;
-      case '00':
-        newInput = prevInput !== '0' ? prevInput.toString() + input : '0';
-        break;
-      case '.':
-        if (!props.input.toString().includes('.')) {
-          newInput = `${props.input}.`;
-        } else {
-          return;
-        }
-        break;
-      default:
-        console.log(prevInput);
-        newInput =
-          Number(prevInput) !== 0
-            ? prevInput.toString() + input
-            : prevInput.toString().substring(1) + input;
+    if (!props.isOutOfRange) {
+      let newInput = '';
+      const newCurrent = props.input;
+      const prevInput = flag ? '0' : newCurrent;
+      switch (input) {
+        case '0':
+          newInput = prevInput !== '0' ? prevInput.toString() + input : '0';
+          break;
+        case '00':
+          newInput = prevInput !== '0' ? prevInput.toString() + input : '0';
+          break;
+        case '.':
+          if (!props.input.toString().includes('.')) {
+            newInput = `${props.input}.`;
+          } else {
+            return;
+          }
+          break;
+        default:
+          console.log(prevInput);
+          newInput =
+            Number(prevInput) !== 0
+              ? prevInput.toString() + input
+              : prevInput.toString().substring(1) + input;
+      }
+      setFlag(false);
+      setCurrent(Number(newInput));
+      handleInput(newInput);
     }
-    setFlag(false);
-    setCurrent(Number(newInput));
-    handleInput(newInput);
   };
 
   const initValue = () => {
@@ -230,6 +234,7 @@ export default function NumberPad(props: INumberPadProps) {
     setSymbol('');
     setFlag(false);
     setIsStarted(false);
+    props.setIsOutOfRange(false);
   };
 
   const handleSignClick = (input: string) => {
@@ -238,34 +243,39 @@ export default function NumberPad(props: INumberPadProps) {
         initValue();
         break;
       case '%':
-        handleInput(calc(prev, current, input).toString());
+        if (!props.isOutOfRange)
+          handleInput(calc(prev, current, input).toString());
         break;
       case '+/−':
-        handleInput(calc(prev, current, input).toString());
+        if (!props.isOutOfRange)
+          handleInput(calc(prev, current, input).toString());
         break;
       case '=':
-        console.log(prev, current, symbol);
-        const newInput1 = calc(prev, current, symbol);
-        setPrev(newInput1);
-        handleInput(newInput1.toString());
-        // setSymbol(input);
-        setFlag(true);
+        if (!props.isOutOfRange) {
+          const newInput1 = calc(prev, current, symbol);
+          setPrev(newInput1);
+          handleInput(newInput1.toString());
+          // setSymbol(input);
+          setFlag(true);
+        }
         break;
       default:
-        const newInput2 = calc(prev, current, symbol);
-        setFlag(true);
-        setSymbol(input);
-        if (symbol === input) {
-          if (symbolFlag) {
-            setPrev(newInput2);
-            handleInput(newInput2.toString());
-            setSymbolFlag(false);
+        if (!props.isOutOfRange) {
+          const newInput2 = calc(prev, current, symbol);
+          setFlag(true);
+          setSymbol(input);
+          if (symbol === input) {
+            if (symbolFlag) {
+              setPrev(newInput2);
+              handleInput(newInput2.toString());
+              setSymbolFlag(false);
+            } else {
+              setPrev(Number(props.input));
+            }
           } else {
             setPrev(Number(props.input));
+            setSymbolFlag(true);
           }
-        } else {
-          setPrev(Number(props.input));
-          setSymbolFlag(true);
         }
     }
   };
