@@ -11,7 +11,7 @@ const conatiner = {
 };
 
 export default function Main() {
-  const [input, setInput] = useState(0);
+  const [input, setInput] = useState('0');
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Key } from 'react';
-import { Input, Flex, Box, PseudoBox, SimpleGrid } from '@chakra-ui/core';
+import { Flex, SimpleGrid } from '@chakra-ui/core';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
@@ -67,8 +67,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface INumberPadProps {
-  setInput: (input: number) => void;
-  input: number;
+  setInput: (input: string) => void;
+  input: string;
   height: number;
 }
 
@@ -78,6 +78,7 @@ export default function NumberPad(props: INumberPadProps) {
   const [symbol, setSymbol] = useState('');
   const [symbolFlag, setSymbolFlag] = useState(false);
   const [flag, setFlag] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
   const classes = useStyles();
   const keypad = [
     { display: 'AC', type: 'sign', value: 'AC' },
@@ -139,9 +140,9 @@ export default function NumberPad(props: INumberPadProps) {
       case '*':
         return num1 * num2;
       case '%':
-        return props.input * 0.01;
+        return Number(props.input) * 0.01;
       case '+/−':
-        return props.input * -1;
+        return Number(props.input) * -1;
     }
     return 0;
   };
@@ -182,33 +183,53 @@ export default function NumberPad(props: INumberPadProps) {
     };
   });
 
+  useEffect(() => {
+    if (props.input !== '0') {
+      setIsStarted(true);
+    }
+  }, [props.input]);
+
+  const handleInput = (inputStr: string) => {
+    props.setInput(inputStr);
+  };
+
   const handleNumberClick = (input: string) => {
     let newInput = '';
     const newCurrent = props.input;
-    const prevInput = flag ? 0 : newCurrent;
+    const prevInput = flag ? '0' : newCurrent;
     switch (input) {
       case '0':
-        newInput = prevInput ? prevInput.toString() + input : '0';
+        newInput = prevInput !== '0' ? prevInput.toString() + input : '0';
         break;
       case '00':
-        newInput = prevInput ? prevInput.toString() + input : '0';
+        newInput = prevInput !== '0' ? prevInput.toString() + input : '0';
+        break;
+      case '.':
+        if (!props.input.toString().includes('.')) {
+          newInput = `${props.input}.`;
+        } else {
+          return;
+        }
         break;
       default:
-        newInput = prevInput
-          ? prevInput.toString() + input
-          : prevInput.toString().substring(1) + input;
+        console.log(prevInput);
+        newInput =
+          Number(prevInput) !== 0
+            ? prevInput.toString() + input
+            : prevInput.toString().substring(1) + input;
     }
     setFlag(false);
     setCurrent(Number(newInput));
-    props.setInput(Number(newInput));
+    handleInput(newInput);
   };
 
   const initValue = () => {
-    props.setInput(0);
+    handleInput('0');
     setPrev(0);
     setCurrent(0);
     setSymbol('');
     setFlag(false);
+    setIsStarted(false);
   };
 
   const handleSignClick = (input: string) => {
@@ -217,15 +238,17 @@ export default function NumberPad(props: INumberPadProps) {
         initValue();
         break;
       case '%':
-        props.setInput(calc(prev, current, input));
+        handleInput(calc(prev, current, input).toString());
         break;
       case '+/−':
-        props.setInput(calc(prev, current, input));
+        handleInput(calc(prev, current, input).toString());
         break;
       case '=':
+        console.log(prev, current, symbol);
         const newInput1 = calc(prev, current, symbol);
         setPrev(newInput1);
-        props.setInput(newInput1);
+        handleInput(newInput1.toString());
+        // setSymbol(input);
         setFlag(true);
         break;
       default:
@@ -235,13 +258,13 @@ export default function NumberPad(props: INumberPadProps) {
         if (symbol === input) {
           if (symbolFlag) {
             setPrev(newInput2);
-            props.setInput(newInput2);
+            handleInput(newInput2.toString());
             setSymbolFlag(false);
           } else {
-            setPrev(props.input);
+            setPrev(Number(props.input));
           }
         } else {
-          setPrev(props.input);
+          setPrev(Number(props.input));
           setSymbolFlag(true);
         }
     }
@@ -255,7 +278,7 @@ export default function NumberPad(props: INumberPadProps) {
       <SimpleGrid columns={isLandscape ? 5 : 4} spacing={isSmall ? 1 : 2}>
         {pad.map((key, index: number) => {
           const keyValue =
-            key.display === 'AC' && props.input ? 'C' : key.display;
+            key.display === 'AC' && isStarted ? 'C' : key.display;
           let classStr = null;
           switch (key.type) {
             case 'symbol':

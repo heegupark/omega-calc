@@ -2,14 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { Input, Flex, Box, PseudoBox, SimpleGrid } from '@chakra-ui/core';
 
 interface IInputPadProps {
-  input: number;
+  input: string;
 }
 
 export default function InputPad(props: IInputPadProps) {
-  let fontSize =
-    props.input.toString().length > 11
-      ? `${42 - props.input.toString().length}px`
-      : '42px';
+  const [fontSize, setFontSize] = useState('42px');
+
+  useEffect(() => {
+    setFontSize(
+      Number(props.input).toString().length > 11
+        ? `${42 - props.input.toString().length}px`
+        : '42px'
+    );
+  }, [props.input]);
+
+  const formatInput = (inputStr: string) => {
+    const hasE = Number(inputStr).toString().includes('e');
+    const hasDot = inputStr.includes('.');
+    let result = '';
+
+    if (hasDot) {
+      result =
+        Number(inputStr.split('.')[0]).toLocaleString() +
+        '.' +
+        inputStr.split('.')[1];
+    } else {
+      result = hasE
+        ? Number(inputStr).toString()
+        : Number(inputStr).toLocaleString();
+    }
+
+    return result;
+  };
+
   return (
     <Flex
       // width="300px"
@@ -25,13 +50,7 @@ export default function InputPad(props: IInputPadProps) {
         p={2}
         fontSize={fontSize}
       >
-        <Box textAlign="right">
-          {props.input.toString().length <= 22
-            ? Math.abs(props.input) > 999
-              ? props.input.toLocaleString()
-              : props.input
-            : 'Out of range'}
-        </Box>
+        <Box textAlign="right">{formatInput(props.input)}</Box>
       </SimpleGrid>
     </Flex>
   );
