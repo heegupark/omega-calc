@@ -145,8 +145,9 @@ export default function NumberPad(props: INumberPadProps) {
         return Number(props.input) * 0.01;
       case '+/−':
         return Number(props.input) * -1;
+      default:
+        return num2;
     }
-    return 0;
   };
 
   const downHandler = ({ key }: { key: Key }) => {
@@ -160,6 +161,7 @@ export default function NumberPad(props: INumberPadProps) {
       key === '6' ||
       key === '7' ||
       key === '8' ||
+      key === '.' ||
       key === '9'
     ) {
       handleNumberClick(key.toString());
@@ -215,7 +217,6 @@ export default function NumberPad(props: INumberPadProps) {
           }
           break;
         default:
-          console.log(prevInput);
           newInput =
             Number(prevInput) !== 0
               ? prevInput.toString() + input
